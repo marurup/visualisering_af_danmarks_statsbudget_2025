@@ -1020,42 +1020,47 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
     const total = sumOf(activeData);
     let angle = -Math.PI / 2;
 
-    activeData.forEach((seg, i) => {
-      const sweep    = (seg.value / total) * (2 * Math.PI) - GAP;
-      const isActive = selected === i || hovered === i;
-      const r        = isActive ? OUTER + 10 : OUTER;
-      const push     = isActive ? 8 : 0;
-      const midA     = angle + sweep / 2;
-      const ox       = Math.cos(midA) * push;
-      const oy       = Math.sin(midA) * push;
-
+    // Beregn geometri for alle segmenter én gang
+    const segs = activeData.map((seg, i) => {
+      const sweep  = (seg.value / total) * (2 * Math.PI) - GAP;
+      const isAct  = selected === i || hovered === i;
+      const r      = isAct ? OUTER + 10 : OUTER;
+      const midA   = angle + sweep / 2;
+      const ox     = Math.cos(midA) * (isAct ? 8 : 0);
+      const oy     = Math.sin(midA) * (isAct ? 8 : 0);
       const startA = angle;
+      angle += sweep + GAP;
+      return { seg, i, sweep, isAct, r, ox, oy, startA };
+    });
 
+    // Pas 1: alle segment-udfyldninger
+    segs.forEach(({ seg, i, sweep, isAct, r, ox, oy, startA }) => {
       ctx.beginPath();
       ctx.moveTo(cx + ox, cy + oy);
-      ctx.arc(cx + ox, cy + oy, r,     angle,         angle + sweep);
-      ctx.arc(cx + ox, cy + oy, INNER, angle + sweep, angle, true);
+      ctx.arc(cx + ox, cy + oy, r,     startA,         startA + sweep);
+      ctx.arc(cx + ox, cy + oy, INNER, startA + sweep, startA, true);
       ctx.closePath();
       ctx.fillStyle   = seg.color;
       ctx.globalAlpha = (selected !== null && selected !== i) ? 0.35 : 1;
       ctx.fill();
       ctx.globalAlpha = 1;
+    });
 
-      // Drill-ned-indikator: tynd hvid bue på yderkanten af segmenter med underkategorier
-      if (seg.children && seg.children.length > 0) {
-        const dimmed = selected !== null && selected !== i;
-        ctx.save();
-        ctx.globalAlpha = dimmed ? 0.1 : (isActive ? 0.9 : 0.42);
-        ctx.beginPath();
-        ctx.arc(cx + ox, cy + oy, r + 5, startA + 0.04, startA + sweep - 0.04);
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth   = 2.5;
-        ctx.lineCap     = 'round';
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      angle += sweep + GAP;
+    // Pas 2: drill-indikatorer oven på alle fills (aldrig overdrawet)
+    const anyHovered = hovered !== null && hovered >= 0;
+    segs.forEach(({ seg, i, sweep, isAct, r, ox, oy, startA }) => {
+      if (!(seg.children && seg.children.length > 0)) return;
+      const dimmed = selected !== null && selected !== i;
+      const faded  = anyHovered && !isAct && !dimmed;
+      ctx.save();
+      ctx.globalAlpha = dimmed ? 0.08 : faded ? 0.12 : (isAct ? 0.92 : 0.40);
+      ctx.beginPath();
+      ctx.arc(cx + ox, cy + oy, r + 5, startA + 0.04, startA + sweep - 0.04);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth   = 2.5;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+      ctx.restore();
     });
   }
 
@@ -1086,12 +1091,7 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
     );
     if (idx !== hovered) {
       hovered = idx;
-      if (idx >= 0) {
-        const hasSub = activeData[idx].children && activeData[idx].children.length > 0;
-        canvas.style.cursor = hasSub ? 'zoom-in' : 'pointer';
-      } else {
-        canvas.style.cursor = 'default';
-      }
+      canvas.style.cursor = idx >= 0 ? 'pointer' : 'default';
       updateCenter(idx >= 0 ? idx : selected);
       draw();
     }
