@@ -485,6 +485,22 @@
   }
 
   .detail-note-source a:hover { opacity: 0.75; text-decoration: underline; }
+
+  /* ── Estimat-badge ── */
+  .est-badge {
+    display: inline-block;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--gold);
+    background: rgba(245, 200, 66, 0.08);
+    border: 1px solid rgba(245, 200, 66, 0.22);
+    border-radius: 3px;
+    padding: 0.03rem 0.28rem;
+    margin-left: 0.3rem;
+    vertical-align: middle;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
 </style>
 </head>
 <body>
@@ -601,12 +617,42 @@ const UDGIFTER = [
     note: "Folkepension alene udgør ca. 120 mia. kr. og er den største enkeltpost i hele statsbudgettet. Beløbet dækker overførselsindkomster på tværs af stat, kommuner og regioner.",
     kilde: { tekst: "Finansloven 2025, §§ 15 & 35 – Sociale anliggender & Beskæftigelse", url: "https://www.fm.dk/oekonomi-og-tal/finanslov/finansloven-2025" },
     children: [
-      { name: "Folkepension", value: 120 },
-      { name: "Dagpenge & kontanthjælp", value: 65 },
-      { name: "Førtidspension", value: 50 },
-      { name: "Barsel & familieydelser", value: 40 },
-      { name: "Boligstøtte", value: 18 },
-      { name: "Sociale institutioner", value: 92 },
+      {
+        name: "Folkepension", value: 120, estimate: false,
+        note: "Ca. 782.000 danskere modtager folkepension (2025). Grundbeløbet er 91.908 kr./år; hertil kommer tillæg afhængig af formue og indkomst. Estimat: 782.000 modtagere × ~153.000 kr./år (inkl. tillæg) ≈ 120 mia. kr.",
+        kilde: { tekst: "Borger.dk – Folkepensionens størrelse 2025", url: "https://www.borger.dk/pension-og-efterloen/folkepension/folkepensionens-storrelse" },
+        children: [
+          { name: "Grundpension (grundbeløb)", value: 78, estimate: true },
+          { name: "Pensionstillæg", value: 23, estimate: true },
+          { name: "Supplerende pensionsydelse", value: 7, estimate: true },
+          { name: "Varme- & helbredstillæg", value: 12, estimate: true },
+        ]
+      },
+      {
+        name: "Dagpenge & kontanthjælp", value: 65, estimate: false,
+        note: "Ca. 145.000 dagpengemodtagere (gennemsnit) og ca. 220.000 kontanthjælpsmodtagere i 2025. Staten refunderer kommunerne 50% af kontanthjælpen.",
+        kilde: { tekst: "STAR – Fuldtidsledige og ydelsesmodtagere 2025", url: "https://star.dk/om-star/publikationer/tal-og-analyser/" },
+        children: [
+          { name: "A-dagpenge", value: 37, estimate: true },
+          { name: "Kontanthjælp", value: 13, estimate: true },
+          { name: "Sygedagpenge", value: 10, estimate: true },
+          { name: "Ressourceforløb & revalidering", value: 5, estimate: true },
+        ]
+      },
+      { name: "Førtidspension", value: 50, estimate: false },
+      { name: "Barsel & familieydelser", value: 40, estimate: false },
+      { name: "Boligstøtte", value: 18, estimate: false },
+      {
+        name: "Sociale institutioner", value: 92, estimate: false,
+        note: "Kommunerne leverer primær social service finansieret via statsligt bloktilskud. Ældre- og handicapservice udgør tilsammen langt den største del.",
+        kilde: { tekst: "KL – Kommunernes økonomi 2025", url: "https://www.kl.dk/okonomi-og-administration/kommunalokonomi/" },
+        children: [
+          { name: "Pleje & hjemmehjælp (ældre)", value: 45, estimate: true },
+          { name: "Handicap- & socialpsykiatri", value: 30, estimate: true },
+          { name: "Familiepleje & anbringelse", value: 12, estimate: true },
+          { name: "Misbrugsbehandling", value: 5, estimate: true },
+        ]
+      },
     ]
   },
   {
@@ -614,11 +660,20 @@ const UDGIFTER = [
     note: "Regionerne modtager ca. 130 mia. kr. i bloktilskud til sygehuse og primær sundhed. Det resterende finansieres via aktivitetsbestemte tilskud fra staten.",
     kilde: { tekst: "Finansloven 2025, § 16 – Sundhedsministeriet", url: "https://www.sum.dk/tal-og-analyser" },
     children: [
-      { name: "Sygehuse & regioner", value: 110 },
-      { name: "Praktiserende læger", value: 22 },
-      { name: "Medicin & tilskud", value: 18 },
-      { name: "Psykiatri", value: 14 },
-      { name: "Sundhedsfremme", value: 5 },
+      {
+        name: "Sygehuse & regioner", value: 110, estimate: false,
+        note: "Bloktilskuddet på 84 mia. kr. er fastsat i regionernes økonomiaftale 2025. Aktivitetstilskuddet beregnes efter DRG-takster (diagnoserelaterede grupper pr. behandling).",
+        kilde: { tekst: "Finansministeriet – Regionernes økonomi 2025", url: "https://www.fm.dk/oekonomi-og-tal/regionernes-oekonomi" },
+        children: [
+          { name: "Bloktilskud til regionerne", value: 84, estimate: false },
+          { name: "Aktivitetstilskud (DRG-takster)", value: 17, estimate: true },
+          { name: "Specialiseret behandling", value: 9, estimate: true },
+        ]
+      },
+      { name: "Praktiserende læger", value: 22, estimate: false },
+      { name: "Medicin & tilskud", value: 18, estimate: false },
+      { name: "Psykiatri", value: 14, estimate: false },
+      { name: "Sundhedsfremme", value: 5, estimate: false },
     ]
   },
   {
@@ -626,10 +681,28 @@ const UDGIFTER = [
     note: "Danmark bruger ca. 6,3% af BNP på uddannelse – over EU-gennemsnittet. Folkeskolen finansieres primært af kommunerne via bloktilskud fra staten.",
     kilde: { tekst: "Finansloven 2025, §§ 17–20 – Undervisning & Forskning", url: "https://www.uvm.dk/aktuelt/i-fokus/oekonomi-og-finanslov" },
     children: [
-      { name: "Folkeskole & ungdomsudd.", value: 55 },
-      { name: "Videregående uddannelse", value: 32 },
-      { name: "SU", value: 16 },
-      { name: "Erhvervsuddannelser", value: 10 },
+      {
+        name: "Folkeskole & ungdomsudd.", value: 55, estimate: false,
+        note: "Folkeskoletilskuddet sker via kommunernes bloktilskud og ikke som en direkte FL-post. Gymnasieudgifterne er direkte taxametertilskud fra UVM.",
+        kilde: { tekst: "Undervisningsministeriet – Økonomi og finanslov 2025", url: "https://www.uvm.dk/aktuelt/i-fokus/oekonomi-og-finanslov" },
+        children: [
+          { name: "Folkeskole (kommunalt bloktilskud)", value: 36, estimate: true },
+          { name: "Gymnasier & HF/HTX/HHX", value: 12, estimate: false },
+          { name: "Efterskoler & frie grundskoler", value: 7, estimate: false },
+        ]
+      },
+      {
+        name: "Videregående uddannelse", value: 32, estimate: false,
+        note: "Universiteterne finansieres via grundtilskud og taxametertilskud pr. studerende (STÅ-tilskud). Uddannelsesloftet begrænser optaget på visse uddannelser fra 2024.",
+        kilde: { tekst: "Uddannelses- & Forskningsministeriet – Finanslovsaftale 2025", url: "https://www.ufm.dk/uddannelse/videregaaende-uddannelse" },
+        children: [
+          { name: "Universiteter", value: 21, estimate: false },
+          { name: "Professionshøjskoler & MEL", value: 7, estimate: true },
+          { name: "Kunstneriske uddannelser & øvrige", value: 4, estimate: true },
+        ]
+      },
+      { name: "SU", value: 16, estimate: false },
+      { name: "Erhvervsuddannelser", value: 10, estimate: false },
     ]
   },
   {
@@ -637,10 +710,19 @@ const UDGIFTER = [
     note: "Inkluderer statsgældsrenter på ca. 30 mia. kr. Den samlede statslige nettogæld udgør ca. 700 mia. kr. i 2025. Skatteopkrævning varetages af Skatteforvaltningen.",
     kilde: { tekst: "Statens regnskab 2024 – Finansministeriet", url: "https://www.fm.dk/oekonomi-og-tal/statens-regnskab" },
     children: [
-      { name: "Centraladministration", value: 40 },
-      { name: "Skatteopkrævning", value: 18 },
-      { name: "Statsgæld & renter", value: 30 },
-      { name: "Statistik & forskning", value: 25 },
+      { name: "Centraladministration", value: 40, estimate: false },
+      { name: "Skatteopkrævning", value: 18, estimate: false },
+      {
+        name: "Statsgæld & renter", value: 30, estimate: false,
+        note: "Den samlede statsgæld er ca. 700 mia. kr. (2025). Den gennemsnitlige rente er lav pga. tidligere lån optaget til historisk lave renter. Internationalt bidrag inkl. EU-kontingent.",
+        kilde: { tekst: "Danmarks Nationalbank – Statens låntagning og gæld 2024", url: "https://www.nationalbanken.dk/da/vores-arbejde/statens-gaeld" },
+        children: [
+          { name: "Nettorenteudgifter på statsgæld", value: 22, estimate: false },
+          { name: "Kursreguleringer & øvrige", value: 5, estimate: true },
+          { name: "Internationale bidrag (FN, NATO m.fl.)", value: 3, estimate: true },
+        ]
+      },
+      { name: "Statistik & forskning", value: 25, estimate: false },
     ]
   },
   {
@@ -648,9 +730,18 @@ const UDGIFTER = [
     note: "Danmark nåede NATO's 2%-mål for forsvarsudgifter i 2024. Forsvarsbudgettet er hævet markant siden 2022 som følge af det ændrede sikkerhedspolitiske billede.",
     kilde: { tekst: "Finansloven 2025, § 12 – Forsvarsministeriet", url: "https://www.fmn.dk/da/temaer/forsvarsforlig/" },
     children: [
-      { name: "Forsvaret", value: 40 },
-      { name: "Politi", value: 14 },
-      { name: "Beredskab", value: 6 },
+      {
+        name: "Forsvaret", value: 40, estimate: false,
+        note: "Forsvarsforliget 2024–2033 forpligter til yderligere stigninger mod 3% af BNP. Materielanskaffelser inkluderer bl.a. F-35 kampfly (10 stk., levering 2026–2027) og ny marinekapacitet.",
+        kilde: { tekst: "Forsvarsministeriet – Forsvarsforlig 2024–2033", url: "https://www.fmn.dk/da/temaer/forsvarsforlig/" },
+        children: [
+          { name: "Hær, Søværn & Flyvevåben (drift)", value: 27, estimate: true },
+          { name: "Materielanskaffelser", value: 8, estimate: false },
+          { name: "Efterretning & specialstyrker (FE m.fl.)", value: 5, estimate: true },
+        ]
+      },
+      { name: "Politi", value: 14, estimate: false },
+      { name: "Beredskab", value: 6, estimate: false },
     ]
   },
   {
@@ -658,10 +749,10 @@ const UDGIFTER = [
     note: "Banedanmark og DSB modtager tilsammen ca. 10 mia. kr. i offentlige tilskud. Vejdirektoratets anlægsbudget inkluderer bl.a. udvidelse af motorvejsnettet.",
     kilde: { tekst: "Finansloven 2025, § 28 – Transportministeriet", url: "https://www.trm.dk/ministeriet/fakta-om-transportsektoren/" },
     children: [
-      { name: "Veje & motorveje", value: 18 },
-      { name: "Togdrift & Banedanmark", value: 17 },
-      { name: "Lufthavne & havne", value: 5 },
-      { name: "Offentlig transport", value: 7 },
+      { name: "Veje & motorveje", value: 18, estimate: false },
+      { name: "Togdrift & Banedanmark", value: 17, estimate: false },
+      { name: "Lufthavne & havne", value: 5, estimate: false },
+      { name: "Offentlig transport", value: 7, estimate: false },
     ]
   },
   {
@@ -669,9 +760,9 @@ const UDGIFTER = [
     note: "Inkluderer aktive beskæftigelsestiltag og erhvervsstøtte. En del af beløbet går til arbejdsmarkedsuddannelser (AMU) og jobcentre i kommunerne.",
     kilde: { tekst: "Finansloven 2025, § 17 – Erhvervsministeriet & Beskæftigelsesministeriet", url: "https://www.bm.dk/arbejdsomraader/aktive-tilbud/" },
     children: [
-      { name: "Erhvervsstøtte", value: 10 },
-      { name: "Arbejdsmarkedspolitik", value: 12 },
-      { name: "Iværksætteri", value: 6 },
+      { name: "Erhvervsstøtte", value: 10, estimate: false },
+      { name: "Arbejdsmarkedspolitik", value: 12, estimate: false },
+      { name: "Iværksætteri", value: 6, estimate: false },
     ]
   },
   {
@@ -679,19 +770,37 @@ const UDGIFTER = [
     note: "Den Grønne Fond og klimapartnerskaber udgør en voksende andel. Danmark har juridisk forpligtet sig til 70% CO₂-reduktion i 2030 ift. 1990-niveau.",
     kilde: { tekst: "Finansloven 2025, § 24 – Klima- og Energiministeriet", url: "https://kefm.dk/klima-og-vejr/danmarks-klimamaal/" },
     children: [
-      { name: "Klimafonden", value: 6 },
-      { name: "Natur & vandmiljø", value: 5 },
-      { name: "Affald & cirkulær økonomi", value: 4 },
+      { name: "Klimafonden", value: 6, estimate: false },
+      { name: "Natur & vandmiljø", value: 5, estimate: false },
+      { name: "Affald & cirkulær økonomi", value: 4, estimate: false },
     ]
   },
   {
     name: "Kultur & fritid", value: 8, color: "#e070b4", pct: 1, icon: "🎭",
-    note: "DR modtager ca. 2,5 mia. kr. i public service-tilskud. Kulturministeriet støtter ca. 100 nationale institutioner inkl. museer og scenekunst.",
+    note: "DR modtager ca. 2,1 mia. kr. i public service-tilskud via medieaftale 2024–2027. Kulturministeriet støtter ca. 100 nationale institutioner inkl. museer og scenekunst.",
     kilde: { tekst: "Finansloven 2025, § 21 – Kulturministeriet", url: "https://kum.dk/kultonomik/oekonomiske-fakta/" },
     children: [
-      { name: "DR & medier", value: 2.5 },
-      { name: "Museer & scenekunst", value: 3 },
-      { name: "Idræt", value: 2.5 },
+      {
+        name: "DR & medier", value: 2.5, estimate: false,
+        note: "DR modtager 2.087 mia. kr. via medieaftale 2024–2027. Lokale tv-stationer modtager tilskud via kulturstoette.dk. TV 2 er selvfinansierende via reklamer men modtager et lille anlægstilskud.",
+        kilde: { tekst: "Finansloven 2025, § 21.21.05 – Public service & medier", url: "https://kum.dk/kultonomik/medieoekonomisk-redegoerelse/" },
+        children: [
+          { name: "DR public service-tilskud", value: 2.09, estimate: false },
+          { name: "TV 2/Danmark tilskud", value: 0.2, estimate: false },
+          { name: "Lokale medier & pressestøtte", value: 0.21, estimate: true },
+        ]
+      },
+      {
+        name: "Museer & scenekunst", value: 3, estimate: false,
+        note: "Det Kongelige Teater modtager ca. 600 mio. kr. om året. Nationalmuseet og SMK er de to største statsmuseer. Alle beløb er fra Finansloven § 21.",
+        kilde: { tekst: "Kulturministeriet – Institutionsbudgetter 2025", url: "https://kum.dk/kultonomik/" },
+        children: [
+          { name: "Nationalmuseet & statsmuseer", value: 1.4, estimate: true },
+          { name: "Det Kongelige Teater & opera", value: 0.6, estimate: false },
+          { name: "Øvrig scenekunst & musik", value: 1.0, estimate: true },
+        ]
+      },
+      { name: "Idræt", value: 2.5, estimate: false },
     ]
   },
 ];
@@ -702,9 +811,9 @@ const INDTAEGTER = [
     note: "Indkomstskat er Danmarks absolut største indtægtskilde. Det samlede skattetryk udgør ca. 46% af BNP – et af de højeste i OECD. AM-bidraget på 8% opkræves af alle lønmodtagere.",
     kilde: { tekst: "SKAT – Indkomst- og AM-bidrag 2025", url: "https://www.skat.dk/data.aspx?oid=2234761" },
     children: [
-      { name: "Indkomstskat (stat)", value: 220 },
-      { name: "Kommuneskat", value: 145 },
-      { name: "AM-bidrag (8%)", value: 67 },
+      { name: "Indkomstskat (stat)", value: 220, estimate: false },
+      { name: "Kommuneskat", value: 145, estimate: false },
+      { name: "AM-bidrag (8%)", value: 67, estimate: false },
     ]
   },
   {
@@ -712,8 +821,8 @@ const INDTAEGTER = [
     note: "Danmarks momssats på 25% er en af de højeste i verden. Momsindtægterne er steget støt med det private forbrug og udgør en stabil og bredt funderet skattebase.",
     kilde: { tekst: "SKAT – Momsvejledning 2025", url: "https://www.skat.dk/erhverv/moms/" },
     children: [
-      { name: "Moms på privatforbrug", value: 165 },
-      { name: "Moms på erhverv", value: 51 },
+      { name: "Moms på privatforbrug", value: 165, estimate: false },
+      { name: "Moms på erhverv", value: 51, estimate: false },
     ]
   },
   {
@@ -721,9 +830,9 @@ const INDTAEGTER = [
     note: "PAL-skat (pensionsafkastskat på 15,3%) varierer markant med markedsafkastet og kan svinge adskillige mia. kr. fra år til år. Selskabsskatten er på 22%.",
     kilde: { tekst: "SKAT – Selskabsskat & PAL 2025", url: "https://www.skat.dk/erhverv/selskabsskat/" },
     children: [
-      { name: "Selskabsskat (22%)", value: 82 },
-      { name: "Pensionsafkastskat (PAL)", value: 43 },
-      { name: "Kapitalindkomstskat", value: 22 },
+      { name: "Selskabsskat (22%)", value: 82, estimate: false },
+      { name: "Pensionsafkastskat (PAL)", value: 43, estimate: false },
+      { name: "Kapitalindkomstskat", value: 22, estimate: false },
     ]
   },
   {
@@ -731,11 +840,32 @@ const INDTAEGTER = [
     note: "Energiafgifterne er under pres pga. den grønne omstilling, da el-forbrug afgiftslægges lavere end fossile brændsler. Registreringsafgiften reformeres løbende ifm. stigende elbilsalg.",
     kilde: { tekst: "SKAT – Punktafgifter & energiafgifter 2025", url: "https://www.skat.dk/erhverv/punktafgifter/" },
     children: [
-      { name: "Energiafgifter", value: 38 },
-      { name: "Punktafgifter (øl, vin, cigar)", value: 22 },
-      { name: "Registreringsafgift (biler)", value: 18 },
-      { name: "Grønne afgifter", value: 26 },
-      { name: "Andre afgifter", value: 23 },
+      {
+        name: "Energiafgifter", value: 38, estimate: false,
+        note: "Energiafgifterne er opgjort i Skatteministeriets månedlige provenuopgørelser. Stigende elbilsalg påvirker brændstofindtægterne negativt over de kommende år.",
+        kilde: { tekst: "Skatteministeriet – Skatte- og afgiftsstatistik 2025", url: "https://www.skm.dk/skattetal/statistik/" },
+        children: [
+          { name: "Elafgift", value: 12, estimate: false },
+          { name: "Olieproduktsafgifter", value: 10, estimate: false },
+          { name: "Naturgasafgift", value: 5, estimate: false },
+          { name: "CO₂-afgift (fossile brændsler)", value: 8, estimate: true },
+          { name: "Vandafgift & øvrige", value: 3, estimate: true },
+        ]
+      },
+      { name: "Punktafgifter (øl, vin, cigar)", value: 22, estimate: false },
+      { name: "Registreringsafgift (biler)", value: 18, estimate: false },
+      {
+        name: "Grønne afgifter", value: 26, estimate: true,
+        note: "Kategorien er under løbende ændring med den grønne skattereform. EU's kvotehandelssystem (ETS) er den største enkeltpost. Beregnet ud fra Skatteministeriets grønne afgiftsredegørelse.",
+        kilde: { tekst: "Skatteministeriet – Grønne afgifter 2025", url: "https://www.skm.dk/skattetal/statistik/afgiftsstatistik/" },
+        children: [
+          { name: "EU-kvoter (ETS)", value: 4, estimate: true },
+          { name: "Emballage- & plastikafgift", value: 4, estimate: true },
+          { name: "Brændstofafgift (klimadelen)", value: 8, estimate: true },
+          { name: "Pesticid, NOX & øvrige", value: 10, estimate: true },
+        ]
+      },
+      { name: "Andre afgifter", value: 23, estimate: false },
     ]
   },
   {
@@ -743,9 +873,9 @@ const INDTAEGTER = [
     note: "Kirkeskatten (gennemsnitligt ca. 0,9% af indkomst) opkræves af kommunerne på vegne af Folkekirken. Brugerbetaling dækker bl.a. receptgebyr og dagtilbud.",
     kilde: { tekst: "Danmarks Statistik – Offentlige finanser 2025", url: "https://www.dst.dk/da/Statistik/emner/oekonomi/offentlige-finanser" },
     children: [
-      { name: "Kirkeskat", value: 8 },
-      { name: "Offentlige gebyrer", value: 16 },
-      { name: "Brugerbetaling", value: 15 },
+      { name: "Kirkeskat", value: 8, estimate: false },
+      { name: "Offentlige gebyrer", value: 16, estimate: false },
+      { name: "Brugerbetaling", value: 15, estimate: false },
     ]
   },
   {
@@ -753,8 +883,8 @@ const INDTAEGTER = [
     note: "Det nye ejendomsvurderingssystem baseret på BBR-data trådte i kraft i 2024 og ændrer beregningsgrundlaget for grundskyld. Mange boligejere oplever ændrede skattebilletter.",
     kilde: { tekst: "Vurderingsstyrelsen – Ejendomsskat 2025", url: "https://www.vurderingsmyndighed.dk/ejendomsskat/" },
     children: [
-      { name: "Grundskyld", value: 9 },
-      { name: "Dækningsafgift", value: 3 },
+      { name: "Grundskyld", value: 9, estimate: false },
+      { name: "Dækningsafgift", value: 3, estimate: false },
     ]
   },
   {
@@ -762,8 +892,8 @@ const INDTAEGTER = [
     note: "EU-tilskud via strukturfonde og den fælles landbrugspolitik (CAP) udgør ca. 3 mia. kr. Salg af statslige aktiver varierer fra år til år og budgetteres konservativt.",
     kilde: { tekst: "Finansloven 2025 – Øvrige indtægter, Finansministeriet", url: "https://www.fm.dk/oekonomi-og-tal/finanslov/finansloven-2025" },
     children: [
-      { name: "Salg af aktiver", value: 4 },
-      { name: "EU-tilskud & renter", value: 3 },
+      { name: "Salg af aktiver", value: 4, estimate: false },
+      { name: "EU-tilskud & renter", value: 3, estimate: false },
     ]
   },
 ];
@@ -947,9 +1077,9 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
       (e.clientX - rect.left) * (canvas.width  / rect.width),
       (e.clientY - rect.top)  * (canvas.height / rect.height)
     );
-    if (idx < 0) { if (drillStack.length === 0) selectSeg(null); return; }
+    if (idx < 0) { selectSeg(null); return; }
     const seg = activeData[idx];
-    if (drillStack.length === 0 && seg.children && seg.children.length > 0) {
+    if (seg.children && seg.children.length > 0) {
       drillDown(idx);
     } else {
       selectSeg(selected === idx ? null : idx);
@@ -972,9 +1102,15 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
     const parentTotal = sumOf(seg.children);
     const colors      = generateChildColors(seg.color, seg.children.length);
     activeData = seg.children.map((child, i) => ({
-      name: child.name, value: child.value, color: colors[i],
-      pct: Math.round(child.value / parentTotal * 100),
-      icon: '', children: [], note: null, kilde: null,
+      name:     child.name,
+      value:    child.value,
+      color:    colors[i],
+      pct:      Math.round(child.value / parentTotal * 100),
+      icon:     child.icon     || '',
+      children: child.children || [],
+      note:     child.note     || null,
+      kilde:    child.kilde    || null,
+      estimate: child.estimate || false,
     }));
     selected = null; hovered = null;
     showParentNote(seg);
@@ -1005,23 +1141,40 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
     const bc = document.getElementById(breadcrumbId);
     if (!bc) return;
     if (drillStack.length === 0) { bc.classList.add('hidden'); bc.innerHTML = ''; return; }
-    const parentSeg = drillStack[drillStack.length - 1].parentSeg;
+
     const topLabel  = data === UDGIFTER ? 'Alle udgifter' : 'Alle indtægter';
+    const parentSeg = drillStack[drillStack.length - 1].parentSeg;
+
+    // Build path: top label + each level's name leading up to current
+    let pathHtml = `<button class="bc-back">← ${drillStack.length > 1
+      ? drillStack[drillStack.length - 2].parentSeg.name
+      : topLabel}</button>`;
+
+    // Intermediate crumbs (everything between top and current parent)
+    for (let d = drillStack.length > 1 ? 1 : drillStack.length; d < drillStack.length - 1; d++) {
+      pathHtml += `<span class="bc-sep">›</span><span class="bc-current" style="opacity:.55">${drillStack[d].parentSeg.name}</span>`;
+    }
+
+    pathHtml += `<span class="bc-sep">›</span>
+      <span class="bc-current">${parentSeg.icon ? parentSeg.icon + ' ' : ''}${parentSeg.name}</span>`;
+
     bc.classList.remove('hidden');
-    bc.innerHTML = `
-      <button class="bc-back">← ${topLabel}</button>
-      <span class="bc-sep">›</span>
-      <span class="bc-current">${parentSeg.icon ? parentSeg.icon + ' ' : ''}${parentSeg.name}</span>
-    `;
+    bc.innerHTML = pathHtml;
     bc.querySelector('.bc-back').addEventListener('click', drillUp);
   }
 
   // ── Hint ──
   function updateHint(topLevel) {
     const el = document.getElementById(hintId);
-    if (el) el.textContent = topLevel
-      ? 'Klik på et segment for at se underkategorierne'
-      : 'Klik på ← for at gå tilbage til oversigten';
+    if (!el) return;
+    const hasDrillable = activeData.some(s => s.children && s.children.length > 0);
+    if (topLevel) {
+      el.textContent = 'Klik på et segment for at se underkategorierne';
+    } else if (hasDrillable) {
+      el.textContent = 'Klik på ›-segmenter for at gå dybere — eller ← for at gå tilbage';
+    } else {
+      el.textContent = 'Klik på ← for at gå tilbage til oversigten';
+    }
   }
 
   // ── Center-label ──
@@ -1066,22 +1219,22 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
     const container = document.getElementById(legendId);
     const prevSel   = [...container.querySelectorAll('.legend-item')]
       .findIndex(el => el.classList.contains('selected'));
-    const atTop     = drillStack.length === 0;
 
     container.innerHTML = '';
     activeData.forEach((seg, i) => {
-      const hasDrill = atTop && seg.children && seg.children.length > 0;
-      const item     = document.createElement('div');
-      item.className = 'legend-item' + (i === prevSel ? ' selected' : '');
-      item.innerHTML = `
+      const hasDrill   = seg.children && seg.children.length > 0;
+      const estBadge   = seg.estimate ? '<span class="est-badge">~estimat</span>' : '';
+      const item       = document.createElement('div');
+      item.className   = 'legend-item' + (i === prevSel ? ' selected' : '');
+      item.innerHTML   = `
         <div class="legend-dot" style="background:${seg.color}"></div>
-        <span class="legend-name">${seg.icon ? seg.icon + ' ' : ''}${seg.name}</span>
+        <span class="legend-name">${seg.icon ? seg.icon + ' ' : ''}${seg.name}${estBadge}</span>
         <span class="legend-pct">${seg.pct}%</span>
         <span class="legend-val">${formatVal(seg.value)}</span>
         ${hasDrill ? '<span class="legend-drill">›</span>' : ''}
       `;
       item.addEventListener('click', () => {
-        if (drillStack.length === 0 && seg.children && seg.children.length > 0) {
+        if (seg.children && seg.children.length > 0) {
           drillDown(i);
         } else {
           selectSeg(selected === i ? null : i);
@@ -1130,21 +1283,22 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
 
   // ── Forældre-note ved drill-ned ──
   function showParentNote(seg) {
-    if (!seg.note) return;
     const panel = document.getElementById(detailId);
-    const badge = perBorger ? `<span class="pb-badge">👤 pr. dansker</span>` : '';
+    if (!seg.note && !seg.kilde) { panel.classList.remove('visible'); return; }
+    const pbBadge  = perBorger ? `<span class="pb-badge">👤 pr. dansker</span>` : '';
+    const estBadge = seg.estimate ? `<span class="est-badge">~estimat</span>` : '';
     panel.innerHTML = `
       <div class="detail-header">
         <div class="detail-title">
           <div class="detail-color" style="background:${seg.color}"></div>
-          ${seg.icon} ${seg.name} — ${formatVal(seg.value)} (${seg.pct}%)${badge}
+          ${seg.icon ? seg.icon + ' ' : ''}${seg.name}${estBadge} — ${formatVal(seg.value)} (${seg.pct}%)${pbBadge}
         </div>
         <button class="close-btn" onclick="document.getElementById('${detailId}').classList.remove('visible')">✕ Luk</button>
       </div>
-      <div class="detail-note">
+      ${seg.note ? `<div class="detail-note">
         <div class="detail-note-text">ℹ️ ${seg.note}</div>
         ${seg.kilde ? `<div class="detail-note-source">Kilde: <a href="${seg.kilde.url}" target="_blank" rel="noopener noreferrer">${seg.kilde.tekst} ↗</a></div>` : ''}
-      </div>
+      </div>` : ''}
     `;
     panel.classList.add('visible');
   }
@@ -1159,7 +1313,7 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
     refreshCenter: () => updateCenter(selected),
     refreshDetail: () => {
       if (drillStack.length > 0) showParentNote(drillStack[drillStack.length - 1].parentSeg);
-      else if (selected !== null) updateDetail(selected);
+      else if (selected !== null && selected >= 0) updateDetail(selected);
     },
     forceClose: () => {
       selected = null;
