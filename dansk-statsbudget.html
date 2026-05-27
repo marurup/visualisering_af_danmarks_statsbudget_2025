@@ -1057,11 +1057,12 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
       // (b) alle segmenter er drillable (yderste led) – ingen distinktion at vise
       if (!isAct && (anyHovered || allDrillable)) return;
 
-      // Undgå inverteret bue på meget små segmenter (sweep < 2 × inset)
-      const inset    = 0.04;
-      const arcStart = startA + inset;
-      const arcEnd   = startA + sweep - inset;
-      if (arcEnd <= arcStart) return;
+      // Ring tegnes lidt STØRRE end segmentet (outset): aldrig inverteret, tydeligere ved små segmenter.
+      // OUTSET holdes under GAP/2 (0.018/2 = 0.009) så ringe ikke overlapper hinanden.
+      const OUTSET   = 0.008;
+      const arcStart = startA - OUTSET;
+      const arcEnd   = startA + sweep + OUTSET;
+      if (sweep <= 0) return; // paranoiaguard
 
       const dimmed = selected !== null && selected !== i;
       ctx.save();
