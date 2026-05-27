@@ -1047,16 +1047,27 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
     });
 
     // Pas 2: drill-indikatorer oven på alle fills (aldrig overdrawet)
-    const anyHovered = hovered !== null && hovered >= 0;
+    const allDrillable = activeData.every(s => s.children && s.children.length > 0);
+    const anyHovered   = hovered !== null && hovered >= 0;
     segs.forEach(({ seg, i, sweep, isAct, r, ox, oy, startA }) => {
       if (!(seg.children && seg.children.length > 0)) return;
+
+      // Skjul ikke-aktive ringe hvis:
+      // (a) et andet segment hover'es – den aktive ring skal stå alene, eller
+      // (b) alle segmenter er drillable (yderste led) – ingen distinktion at vise
+      if (!isAct && (anyHovered || allDrillable)) return;
+
+      // Undgå inverteret bue på meget små segmenter (sweep < 2 × inset)
+      const inset    = 0.04;
+      const arcStart = startA + inset;
+      const arcEnd   = startA + sweep - inset;
+      if (arcEnd <= arcStart) return;
+
       const dimmed = selected !== null && selected !== i;
-      const faded  = anyHovered && !isAct && !dimmed;
-      if (faded) return; // skjul andre ringes når noget hover'es
       ctx.save();
       ctx.globalAlpha = dimmed ? 0.08 : isAct ? 0.92 : 0.40;
       ctx.beginPath();
-      ctx.arc(cx + ox, cy + oy, r + 5, startA + 0.04, startA + sweep - 0.04);
+      ctx.arc(cx + ox, cy + oy, r + 5, arcStart, arcEnd);
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth   = 2.5;
       ctx.lineCap     = 'round';
