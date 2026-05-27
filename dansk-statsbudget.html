@@ -1052,8 +1052,9 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
       if (!(seg.children && seg.children.length > 0)) return;
       const dimmed = selected !== null && selected !== i;
       const faded  = anyHovered && !isAct && !dimmed;
+      if (faded) return; // skjul andre ringes når noget hover'es
       ctx.save();
-      ctx.globalAlpha = dimmed ? 0.08 : faded ? 0.12 : (isAct ? 0.92 : 0.40);
+      ctx.globalAlpha = dimmed ? 0.08 : isAct ? 0.92 : 0.40;
       ctx.beginPath();
       ctx.arc(cx + ox, cy + oy, r + 5, startA + 0.04, startA + sweep - 0.04);
       ctx.strokeStyle = '#ffffff';
