@@ -217,6 +217,14 @@
     line-height: 1.35;
   }
 
+  .center-label .cl-hint {
+    font-size: 0.58rem;
+    color: var(--accent);
+    margin-top: 0.3rem;
+    opacity: 0.85;
+    letter-spacing: 0.03em;
+  }
+
   body.per-borger .center-label .cl-value {
     font-size: 1.2rem;
     color: var(--gold);
@@ -1021,6 +1029,8 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
       const ox       = Math.cos(midA) * push;
       const oy       = Math.sin(midA) * push;
 
+      const startA = angle;
+
       ctx.beginPath();
       ctx.moveTo(cx + ox, cy + oy);
       ctx.arc(cx + ox, cy + oy, r,     angle,         angle + sweep);
@@ -1030,6 +1040,21 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
       ctx.globalAlpha = (selected !== null && selected !== i) ? 0.35 : 1;
       ctx.fill();
       ctx.globalAlpha = 1;
+
+      // Drill-ned-indikator: tynd hvid bue på yderkanten af segmenter med underkategorier
+      if (seg.children && seg.children.length > 0) {
+        const dimmed = selected !== null && selected !== i;
+        ctx.save();
+        ctx.globalAlpha = dimmed ? 0.1 : (isActive ? 0.9 : 0.42);
+        ctx.beginPath();
+        ctx.arc(cx + ox, cy + oy, r + 5, startA + 0.04, startA + sweep - 0.04);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth   = 2.5;
+        ctx.lineCap     = 'round';
+        ctx.stroke();
+        ctx.restore();
+      }
+
       angle += sweep + GAP;
     });
   }
@@ -1061,7 +1086,12 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
     );
     if (idx !== hovered) {
       hovered = idx;
-      canvas.style.cursor = idx >= 0 ? 'pointer' : 'default';
+      if (idx >= 0) {
+        const hasSub = activeData[idx].children && activeData[idx].children.length > 0;
+        canvas.style.cursor = hasSub ? 'zoom-in' : 'pointer';
+      } else {
+        canvas.style.cursor = 'default';
+      }
       updateCenter(idx >= 0 ? idx : selected);
       draw();
     }
@@ -1194,15 +1224,17 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
           <div class="cl-name">${parentSeg ? parentSeg.name : 'Samlet beløb'}</div>`;
       }
     } else {
-      const seg = activeData[idx];
+      const seg       = activeData[idx];
+      const drillHint = (seg.children && seg.children.length > 0)
+        ? '<div class="cl-hint">› klik for at dykke ned</div>' : '';
       if (perBorger) {
         el.innerHTML = `
           <div class="cl-value">${miaToPerBorger(seg.value)}</div>
-          <div class="cl-name">pr. dansker<br><span style="opacity:.7">${seg.name}</span></div>`;
+          <div class="cl-name">pr. dansker<br><span style="opacity:.7">${seg.name}</span></div>${drillHint}`;
       } else {
         el.innerHTML = `
           <div class="cl-value">${seg.value} mia.</div>
-          <div class="cl-name">${seg.name}</div>`;
+          <div class="cl-name">${seg.name}</div>${drillHint}`;
       }
     }
   }
