@@ -404,6 +404,36 @@
     border-top: 1px solid var(--border);
     line-height: 1.7;
   }
+
+  /* ── Detalje-note ── */
+  .detail-note {
+    margin-top: 1.2rem;
+    padding: 0.85rem 1rem;
+    border-left: 3px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    transition: border-color 0.3s;
+  }
+
+  .detail-note-text {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .detail-note-source {
+    font-size: 0.76rem;
+    color: var(--muted);
+  }
+
+  .detail-note-source a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .detail-note-source a:hover { opacity: 0.75; text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -515,6 +545,8 @@ let perBorger = false;
 const UDGIFTER = [
   {
     name: "Social beskyttelse", value: 385, color: "#e05c6b", pct: 41, icon: "🏠",
+    note: "Folkepension alene udgør ca. 120 mia. kr. og er den største enkeltpost i hele statsbudgettet. Beløbet dækker overførselsindkomster på tværs af stat, kommuner og regioner.",
+    kilde: { tekst: "Finansloven 2025, §§ 15 & 35 – Sociale anliggender & Beskæftigelse", url: "https://www.fm.dk/oekonomi-og-tal/finanslov/finansloven-2025" },
     children: [
       { name: "Folkepension", value: 120 },
       { name: "Dagpenge & kontanthjælp", value: 65 },
@@ -526,6 +558,8 @@ const UDGIFTER = [
   },
   {
     name: "Sundhedsvæsen", value: 169, color: "#e0845c", pct: 18, icon: "🏥",
+    note: "Regionerne modtager ca. 130 mia. kr. i bloktilskud til sygehuse og primær sundhed. Det resterende finansieres via aktivitetsbestemte tilskud fra staten.",
+    kilde: { tekst: "Finansloven 2025, § 16 – Sundhedsministeriet", url: "https://www.sum.dk/tal-og-analyser" },
     children: [
       { name: "Sygehuse & regioner", value: 110 },
       { name: "Praktiserende læger", value: 22 },
@@ -536,6 +570,8 @@ const UDGIFTER = [
   },
   {
     name: "Uddannelse", value: 113, color: "#d4b84a", pct: 12, icon: "🎓",
+    note: "Danmark bruger ca. 6,3% af BNP på uddannelse – over EU-gennemsnittet. Folkeskolen finansieres primært af kommunerne via bloktilskud fra staten.",
+    kilde: { tekst: "Finansloven 2025, §§ 17–20 – Undervisning & Forskning", url: "https://www.uvm.dk/aktuelt/i-fokus/oekonomi-og-finanslov" },
     children: [
       { name: "Folkeskole & ungdomsudd.", value: 55 },
       { name: "Videregående uddannelse", value: 32 },
@@ -545,6 +581,8 @@ const UDGIFTER = [
   },
   {
     name: "Generelle tjenester", value: 113, color: "#7ec87e", pct: 12, icon: "🏛️",
+    note: "Inkluderer statsgældsrenter på ca. 30 mia. kr. Den samlede statslige nettogæld udgør ca. 700 mia. kr. i 2025. Skatteopkrævning varetages af Skatteforvaltningen.",
+    kilde: { tekst: "Statens regnskab 2024 – Finansministeriet", url: "https://www.fm.dk/oekonomi-og-tal/statens-regnskab" },
     children: [
       { name: "Centraladministration", value: 40 },
       { name: "Skatteopkrævning", value: 18 },
@@ -554,6 +592,8 @@ const UDGIFTER = [
   },
   {
     name: "Forsvar & politi", value: 60, color: "#4eb8c8", pct: 6, icon: "🛡️",
+    note: "Danmark nåede NATO's 2%-mål for forsvarsudgifter i 2024. Forsvarsbudgettet er hævet markant siden 2022 som følge af det ændrede sikkerhedspolitiske billede.",
+    kilde: { tekst: "Finansloven 2025, § 12 – Forsvarsministeriet", url: "https://www.fmn.dk/da/temaer/forsvarsforlig/" },
     children: [
       { name: "Forsvaret", value: 40 },
       { name: "Politi", value: 14 },
@@ -562,6 +602,8 @@ const UDGIFTER = [
   },
   {
     name: "Infrastruktur & transport", value: 47, color: "#7090e8", pct: 5, icon: "🚂",
+    note: "Banedanmark og DSB modtager tilsammen ca. 10 mia. kr. i offentlige tilskud. Vejdirektoratets anlægsbudget inkluderer bl.a. udvidelse af motorvejsnettet.",
+    kilde: { tekst: "Finansloven 2025, § 28 – Transportministeriet", url: "https://www.trm.dk/ministeriet/fakta-om-transportsektoren/" },
     children: [
       { name: "Veje & motorveje", value: 18 },
       { name: "Togdrift & Banedanmark", value: 17 },
@@ -571,6 +613,8 @@ const UDGIFTER = [
   },
   {
     name: "Erhverv & arbejdsmarked", value: 28, color: "#b078d4", pct: 3, icon: "💼",
+    note: "Inkluderer aktive beskæftigelsestiltag og erhvervsstøtte. En del af beløbet går til arbejdsmarkedsuddannelser (AMU) og jobcentre i kommunerne.",
+    kilde: { tekst: "Finansloven 2025, § 17 – Erhvervsministeriet & Beskæftigelsesministeriet", url: "https://www.bm.dk/arbejdsomraader/aktive-tilbud/" },
     children: [
       { name: "Erhvervsstøtte", value: 10 },
       { name: "Arbejdsmarkedspolitik", value: 12 },
@@ -579,6 +623,8 @@ const UDGIFTER = [
   },
   {
     name: "Miljø & klima", value: 15, color: "#a0c060", pct: 2, icon: "🌱",
+    note: "Den Grønne Fond og klimapartnerskaber udgør en voksende andel. Danmark har juridisk forpligtet sig til 70% CO₂-reduktion i 2030 ift. 1990-niveau.",
+    kilde: { tekst: "Finansloven 2025, § 24 – Klima- og Energiministeriet", url: "https://kefm.dk/klima-og-vejr/danmarks-klimamaal/" },
     children: [
       { name: "Klimafonden", value: 6 },
       { name: "Natur & vandmiljø", value: 5 },
@@ -587,6 +633,8 @@ const UDGIFTER = [
   },
   {
     name: "Kultur & fritid", value: 8, color: "#e070b4", pct: 1, icon: "🎭",
+    note: "DR modtager ca. 2,5 mia. kr. i public service-tilskud. Kulturministeriet støtter ca. 100 nationale institutioner inkl. museer og scenekunst.",
+    kilde: { tekst: "Finansloven 2025, § 21 – Kulturministeriet", url: "https://kum.dk/kultonomik/oekonomiske-fakta/" },
     children: [
       { name: "DR & medier", value: 2.5 },
       { name: "Museer & scenekunst", value: 3 },
@@ -598,6 +646,8 @@ const UDGIFTER = [
 const INDTAEGTER = [
   {
     name: "Personskatter & AM-bidrag", value: 432, color: "#4e9fff", pct: 44, icon: "👤",
+    note: "Indkomstskat er Danmarks absolut største indtægtskilde. Det samlede skattetryk udgør ca. 46% af BNP – et af de højeste i OECD. AM-bidraget på 8% opkræves af alle lønmodtagere.",
+    kilde: { tekst: "SKAT – Indkomst- og AM-bidrag 2025", url: "https://www.skat.dk/data.aspx?oid=2234761" },
     children: [
       { name: "Indkomstskat (stat)", value: 220 },
       { name: "Kommuneskat", value: 145 },
@@ -606,6 +656,8 @@ const INDTAEGTER = [
   },
   {
     name: "Moms (25%)", value: 216, color: "#4ecfaf", pct: 22, icon: "🛒",
+    note: "Danmarks momssats på 25% er en af de højeste i verden. Momsindtægterne er steget støt med det private forbrug og udgør en stabil og bredt funderet skattebase.",
+    kilde: { tekst: "SKAT – Momsvejledning 2025", url: "https://www.skat.dk/erhverv/moms/" },
     children: [
       { name: "Moms på privatforbrug", value: 165 },
       { name: "Moms på erhverv", value: 51 },
@@ -613,6 +665,8 @@ const INDTAEGTER = [
   },
   {
     name: "Selskabs- & kapitalskatter", value: 147, color: "#8ecf5f", pct: 15, icon: "🏢",
+    note: "PAL-skat (pensionsafkastskat på 15,3%) varierer markant med markedsafkastet og kan svinge adskillige mia. kr. fra år til år. Selskabsskatten er på 22%.",
+    kilde: { tekst: "SKAT – Selskabsskat & PAL 2025", url: "https://www.skat.dk/erhverv/selskabsskat/" },
     children: [
       { name: "Selskabsskat (22%)", value: 82 },
       { name: "Pensionsafkastskat (PAL)", value: 43 },
@@ -621,6 +675,8 @@ const INDTAEGTER = [
   },
   {
     name: "Afgifter", value: 127, color: "#cfaf4e", pct: 13, icon: "⛽",
+    note: "Energiafgifterne er under pres pga. den grønne omstilling, da el-forbrug afgiftslægges lavere end fossile brændsler. Registreringsafgiften reformeres løbende ifm. stigende elbilsalg.",
+    kilde: { tekst: "SKAT – Punktafgifter & energiafgifter 2025", url: "https://www.skat.dk/erhverv/punktafgifter/" },
     children: [
       { name: "Energiafgifter", value: 38 },
       { name: "Punktafgifter (øl, vin, cigar)", value: 22 },
@@ -631,6 +687,8 @@ const INDTAEGTER = [
   },
   {
     name: "Bidrag & gebyrer", value: 39, color: "#cf6f4e", pct: 4, icon: "📋",
+    note: "Kirkeskatten (gennemsnitligt ca. 0,9% af indkomst) opkræves af kommunerne på vegne af Folkekirken. Brugerbetaling dækker bl.a. receptgebyr og dagtilbud.",
+    kilde: { tekst: "Danmarks Statistik – Offentlige finanser 2025", url: "https://www.dst.dk/da/Statistik/emner/oekonomi/offentlige-finanser" },
     children: [
       { name: "Kirkeskat", value: 8 },
       { name: "Offentlige gebyrer", value: 16 },
@@ -639,6 +697,8 @@ const INDTAEGTER = [
   },
   {
     name: "Ejendomsskatter", value: 12, color: "#9f6fcf", pct: 1, icon: "🏘️",
+    note: "Det nye ejendomsvurderingssystem baseret på BBR-data trådte i kraft i 2024 og ændrer beregningsgrundlaget for grundskyld. Mange boligejere oplever ændrede skattebilletter.",
+    kilde: { tekst: "Vurderingsstyrelsen – Ejendomsskat 2025", url: "https://www.vurderingsmyndighed.dk/ejendomsskat/" },
     children: [
       { name: "Grundskyld", value: 9 },
       { name: "Dækningsafgift", value: 3 },
@@ -646,6 +706,8 @@ const INDTAEGTER = [
   },
   {
     name: "Øvrige indtægter", value: 7, color: "#6fafcf", pct: 1, icon: "📦",
+    note: "EU-tilskud via strukturfonde og den fælles landbrugspolitik (CAP) udgør ca. 3 mia. kr. Salg af statslige aktiver varierer fra år til år og budgetteres konservativt.",
+    kilde: { tekst: "Finansloven 2025 – Øvrige indtægter, Finansministeriet", url: "https://www.fm.dk/oekonomi-og-tal/finanslov/finansloven-2025" },
     children: [
       { name: "Salg af aktiver", value: 4 },
       { name: "EU-tilskud & renter", value: 3 },
@@ -861,6 +923,14 @@ function buildPie(canvasId, data, legendId, detailId, centerId) {
         </div>
       </div>`).join('');
 
+    const noteHtml = seg.note ? `
+      <div class="detail-note">
+        <div class="detail-note-text">ℹ️ ${seg.note}</div>
+        ${seg.kilde ? `<div class="detail-note-source">
+          Kilde: <a href="${seg.kilde.url}" target="_blank" rel="noopener noreferrer">${seg.kilde.tekst} ↗</a>
+        </div>` : ''}
+      </div>` : '';
+
     panel.innerHTML = `
       <div class="detail-header">
         <div class="detail-title">
@@ -873,6 +943,7 @@ function buildPie(canvasId, data, legendId, detailId, centerId) {
         </button>
       </div>
       <div class="sub-items">${childHtml}</div>
+      ${noteHtml}
     `;
     panel.classList.add('visible');
   }
