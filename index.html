@@ -553,18 +553,18 @@
     <div class="summary">
       <div class="summary-card">
         <div class="label">Samlede udgifter</div>
-        <div class="value updatable" id="udg-s-total">938 mia.</div>
+        <div class="value updatable" id="udg-s-total">958 mia.</div>
         <div class="sub" id="udg-s-total-sub">Statsbudget 2025</div>
       </div>
       <div class="summary-card">
         <div class="label">Største post</div>
         <div class="value">Social</div>
-        <div class="sub">41% af udgifterne</div>
+        <div class="sub">42% af udgifterne</div>
       </div>
       <div class="summary-card">
         <div class="label">Overskud (DAU)</div>
-        <div class="value updatable" id="udg-s-overskud">42 mia.</div>
-        <div class="sub" id="udg-s-overskud-sub">1,4% af BNP</div>
+        <div class="value updatable" id="udg-s-overskud">22 mia.</div>
+        <div class="sub" id="udg-s-overskud-sub">0,8% af BNP</div>
       </div>
     </div>
 
@@ -573,7 +573,7 @@
       <div class="chart-wrap">
         <canvas id="udg-pie" width="340" height="340"></canvas>
         <div class="center-label" id="udg-center">
-          <div class="cl-value">938 mia.</div>
+          <div class="cl-value">958 mia.</div>
           <div class="cl-name">Samlede udgifter</div>
         </div>
       </div>
@@ -642,44 +642,70 @@ let perBorger = false;
 
 const UDGIFTER = [
   {
-    name: "Social beskyttelse", value: 385, color: "#e05c6b", pct: 41, icon: "🏠",
-    note: "Folkepension alene udgør ca. 120 mia. kr. og er den største enkeltpost i hele statsbudgettet. Beløbet dækker overførselsindkomster på tværs af stat, kommuner og regioner.",
-    kilde: { tekst: "Finansloven 2025, §§ 15 & 35 – Sociale anliggender & Beskæftigelse", url: "https://www.fm.dk/oekonomi-og-tal/finanslov/finansloven-2025" },
+    name: "Social beskyttelse", value: 405, color: "#e05c6b", pct: 42, icon: "🏠",
+    note: "Folkepension er den største enkeltpost med 161 mia. kr. i 2024 (officielt tal fra DST). Beløbet dækker kontantoverførsler og sociale institutioner på tværs af stat, kommuner og regioner.",
+    kilde: { tekst: "Danmarks Statistik – Sociale udgifter 2024 (ESSPROS1)", url: "https://www.statbank.dk/ESSPROS1" },
     children: [
       {
-        name: "Folkepension", value: 120, estimate: false,
-        note: "Ca. 782.000 danskere modtager folkepension (2025). Grundbeløbet er 91.908 kr./år; hertil kommer tillæg afhængig af formue og indkomst. Estimat: 782.000 modtagere × ~153.000 kr./år (inkl. tillæg) ≈ 120 mia. kr.",
-        kilde: { tekst: "Borger.dk – Folkepensionens størrelse 2025", url: "https://www.borger.dk/pension-og-efterloen/folkepension/folkepensionens-storrelse" },
+        name: "Folkepension", value: 161, estimate: false,
+        note: "1.091.300 folkepensionister pr. dec. 2024. Inkluderer grundpension, pensionstillæg, delpension og ældrecheck. Officielt tal fra DST ESSPROS 2024.",
+        kilde: { tekst: "Danmarks Statistik – Sociale udgifter ESSPROS1 (post 3.2)", url: "https://www.statbank.dk/ESSPROS1" },
         children: [
-          { name: "Grundpension (grundbeløb)", value: 78, estimate: true },
-          { name: "Pensionstillæg", value: 23, estimate: true },
-          { name: "Supplerende pensionsydelse", value: 7, estimate: true },
-          { name: "Varme- & helbredstillæg", value: 12, estimate: true },
+          { name: "Grundpension (grundbeløb)", value: 105, estimate: true },
+          { name: "Pensionstillæg", value: 31, estimate: true },
+          { name: "Supplerende pensionsydelse", value: 9, estimate: true },
+          { name: "Varme- & helbredstillæg", value: 16, estimate: true },
         ]
       },
       {
-        name: "Dagpenge & kontanthjælp", value: 65, estimate: false,
-        note: "Ca. 145.000 dagpengemodtagere (gennemsnit) og ca. 220.000 kontanthjælpsmodtagere i 2025. Staten refunderer kommunerne 50% af kontanthjælpen.",
-        kilde: { tekst: "STAR – Fuldtidsledige og ydelsesmodtagere 2025", url: "https://star.dk/om-star/publikationer/tal-og-analyser/" },
+        name: "Dagpenge & kontanthjælp", value: 42, estimate: false,
+        note: "A-dagpenge (forsikrede ledige) og kontanthjælp (ikke-arbejdsmarkedsparate) er officielle DST-tal for 2024. Aktivering og beskæftigelsesindsats indgår tillige.",
+        kilde: { tekst: "Danmarks Statistik – Sociale udgifter ESSPROS1 (post 6.3, 8.7)", url: "https://www.statbank.dk/ESSPROS1" },
         children: [
-          { name: "A-dagpenge", value: 37, estimate: true },
-          { name: "Kontanthjælp", value: 13, estimate: true },
-          { name: "Sygedagpenge", value: 10, estimate: true },
-          { name: "Ressourceforløb & revalidering", value: 5, estimate: true },
+          { name: "A-dagpenge (forsikrede ledige)", value: 22, estimate: false,
+            kilde: { tekst: "DST ESSPROS1 post 6.3+6.4 – 2024", url: "https://www.statbank.dk/ESSPROS1" } },
+          { name: "Kontanthjælp", value: 14, estimate: false,
+            kilde: { tekst: "DST ESSPROS1 post 8.7 – 2024", url: "https://www.statbank.dk/ESSPROS1" } },
+          { name: "Aktivering & beskæftigelsesindsats", value: 6, estimate: true },
         ]
       },
-      { name: "Førtidspension", value: 50, estimate: false },
-      { name: "Barsel & familieydelser", value: 40, estimate: false },
-      { name: "Boligstøtte", value: 18, estimate: false },
       {
-        name: "Sociale institutioner", value: 92, estimate: false,
-        note: "Kommunerne leverer primær social service finansieret via statsligt bloktilskud. Ældre- og handicapservice udgør tilsammen langt den største del.",
-        kilde: { tekst: "KL – Kommunernes økonomi 2025", url: "https://www.kl.dk/okonomi-og-administration/kommunalokonomi/" },
+        name: "Førtidspension", value: 54, estimate: false,
+        note: "245.000 førtidspensionister pr. dec. 2024. Inkluderer grundbeløb og tillæg. Officielt tal fra DST ESSPROS 2024.",
+        kilde: { tekst: "Danmarks Statistik – Sociale udgifter ESSPROS1 (post 2.5)", url: "https://www.statbank.dk/ESSPROS1" },
+      },
+      {
+        name: "Barsel & familieydelser", value: 31, estimate: false,
+        note: "Barselsdagpenge og løn under barsel samt børne- og ungeydelse (børnecheck). Officielle DST-tal for 2024.",
+        kilde: { tekst: "Danmarks Statistik – Sociale udgifter ESSPROS1 (post 5.3, 5.4)", url: "https://www.statbank.dk/ESSPROS1" },
         children: [
-          { name: "Pleje & hjemmehjælp (ældre)", value: 45, estimate: true },
-          { name: "Handicap- & socialpsykiatri", value: 30, estimate: true },
-          { name: "Familiepleje & anbringelse", value: 12, estimate: true },
-          { name: "Misbrugsbehandling", value: 5, estimate: true },
+          { name: "Barselsdagpenge", value: 13, estimate: false,
+            kilde: { tekst: "DST ESSPROS1 post 5.3 – 2024", url: "https://www.statbank.dk/ESSPROS1" } },
+          { name: "Børne- og ungeydelse", value: 18, estimate: false,
+            kilde: { tekst: "DST ESSPROS1 post 5.4 – 2024", url: "https://www.statbank.dk/ESSPROS1" } },
+        ]
+      },
+      {
+        name: "Boligstøtte", value: 17, estimate: false,
+        note: "Boligydelse (til pensionister) og boligsikring (til øvrige). Officielle DST-tal for 2024.",
+        kilde: { tekst: "Danmarks Statistik – Sociale udgifter ESSPROS1 (post 7.1, 7.2)", url: "https://www.statbank.dk/ESSPROS1" },
+        children: [
+          { name: "Boligydelse (pensionister)", value: 11, estimate: false,
+            kilde: { tekst: "DST ESSPROS1 post 7.2 – 2024", url: "https://www.statbank.dk/ESSPROS1" } },
+          { name: "Boligsikring (øvrige)", value: 6, estimate: false,
+            kilde: { tekst: "DST ESSPROS1 post 7.1 – 2024", url: "https://www.statbank.dk/ESSPROS1" } },
+        ]
+      },
+      {
+        name: "Sociale institutioner", value: 100, estimate: false,
+        note: "Kommunerne leverer primær social service. Ældrepleje og handicapservice udgør langt den største del. Officielle DST-tal for 2024.",
+        kilde: { tekst: "Danmarks Statistik – Sociale udgifter ESSPROS1 (post 3.1, 2.1, 5.2)", url: "https://www.statbank.dk/ESSPROS1" },
+        children: [
+          { name: "Pleje & hjemmehjælp (ældre)", value: 50, estimate: false,
+            kilde: { tekst: "DST ESSPROS1 post 3.1 – 2024", url: "https://www.statbank.dk/ESSPROS1" } },
+          { name: "Handicap- & botilbud", value: 30, estimate: false,
+            kilde: { tekst: "DST ESSPROS1 post 2.1 – 2024", url: "https://www.statbank.dk/ESSPROS1" } },
+          { name: "Tilbud til familier m. særlige problemer", value: 20, estimate: true },
         ]
       },
     ]
@@ -1372,6 +1398,7 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
   // Init
   buildLegend();
   draw();
+  updateCenter(null);
 
   // Offentlig API
   return {
@@ -1395,8 +1422,8 @@ function buildPie(canvasId, data, legendId, detailId, centerId, breadcrumbId, hi
 
 // Opsummerings-kort: [id, mia-værdi, samlet-tekst, per-borger-tekst, sub-samlet, sub-pb]
 const SUMMARY_CARDS = [
-  ['udg-s-total',    938, '938 mia.',  null, 'Statsbudget 2025',  'pr. dansker · udgifter'],
-  ['udg-s-overskud',  42,  '42 mia.',  null, '1,4% af BNP',       'pr. dansker · overskud'],
+  ['udg-s-total',    958, '958 mia.',  null, 'Statsbudget 2025',  'pr. dansker · udgifter'],
+  ['udg-s-overskud',  22,  '22 mia.',  null, '0,8% af BNP',       'pr. dansker · overskud'],
   ['ind-s-total',    980, '980 mia.',  null, 'Statsbudget 2025',  'pr. dansker · indtægter'],
   ['ind-s-overskud',  42,  '42 mia.',  null, 'Statsoverskud 2025','pr. dansker · overskud'],
 ];
