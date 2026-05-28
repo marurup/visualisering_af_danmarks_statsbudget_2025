@@ -1,0 +1,47 @@
+name: Deploy til GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Indsæt versionsinfo i index.html
+        run: |
+          SHORT=$(git rev-parse --short HEAD)
+          FULL=$(git rev-parse HEAD)
+          DATE=$(git log -1 --format='%cd' --date='format:%Y-%m-%d %H:%M UTC')
+          sed -i "s|%%GIT_SHORT%%|${SHORT}|g" index.html
+          sed -i "s|%%GIT_FULL%%|${FULL}|g"   index.html
+          sed -i "s|%%GIT_DATE%%|${DATE}|g"   index.html
+
+      - name: Konfigurér Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy til GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

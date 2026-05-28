@@ -494,6 +494,23 @@
 
   .detail-note-source a:hover { opacity: 0.75; text-decoration: underline; }
 
+  /* ── Versionsinfo ── */
+  .version-info {
+    display: block;
+    margin-top: 0.7rem;
+    font-size: 0.63rem;
+    opacity: 0.45;
+    transition: opacity 0.2s;
+  }
+  .version-info:hover { opacity: 0.8; }
+  .version-info a {
+    color: inherit;
+    font-family: ui-monospace, 'SFMono-Regular', 'Courier New', monospace;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+  }
+  .version-info a:hover { color: var(--accent); text-decoration: underline; }
+
   /* ── Estimat-badge ── */
   .est-badge {
     display: inline-block;
@@ -607,6 +624,10 @@
     Kilde: Finansministeriet – Finansloven 2025 &amp; Danmarks Statistik.<br>
     Tal er afrundede og dækker den samlede offentlige sektor (stat, kommuner, regioner).<br>
     Per-borger-beregning baseret på 5.932.654 indbyggere (Danmarks Statistik, jan. 2025).
+    <span class="version-info">
+      <a href="https://github.com/marurup/visualisering_af_danmarks_statsbudget_2025/commit/%%GIT_FULL%%"
+         target="_blank" rel="noopener noreferrer">%%GIT_SHORT%%</a> · %%GIT_DATE%%
+    </span>
   </div>
 </div>
 
